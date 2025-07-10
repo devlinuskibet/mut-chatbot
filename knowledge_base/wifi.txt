@@ -1,0 +1,3 @@
+ MUT provides campus Wi‑Fi under eduroam.
+- Connect via “MUT eduroam” across campus :contentReference[oaicite:21]{index=21}.
+ICT helpdesk supports username setup and troubleshooting.
