@@ -6,12 +6,12 @@ import requests
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
 # === Pinecone Setup ===
-PINECONE_API_KEY = "pcsk_3Ew2Fb_5MQGNN9CGfzJZYiAU4e3MdspC6fK4L7BdCztLyuuoVvgALFuxy6csDny8tfnpoo"
+PINECONE_API_KEY = "your apikey"
 pc = Pinecone(api_key=PINECONE_API_KEY)
 index = pc.Index("mut-chatbot")
 
 # === OpenRouter Settings ===
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = "your api key"
 LLM_MODEL = "mistralai/mistral-7b-instruct"
 
 # === Embedding Function ===
