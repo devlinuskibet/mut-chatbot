@@ -1,0 +1,45 @@
+import os
+from sentence_transformers import SentenceTransformer
+from pinecone import Pinecone
+from tqdm import tqdm
+
+# Load the embedding model (384-dimensional)
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+# Initialize Pinecone client with your API key
+pc = Pinecone(api_key="pcsk_3ryQzC_4oKaRMBdcLr5tFdTXBQi6sGkSvPHSWw57mMtrjYxotz7TAv5w2jruRQw5zaieKo")
+
+# Connect to your Pinecone index
+index = pc.Index("mut-chatbot")
+
+# Function to chunk long text into smaller parts
+def chunk_text(text, chunk_size=300):
+    words = text.split()
+    return [' '.join(words[i:i + chunk_size]) for i in range(0, len(words), chunk_size)]
+
+# Define the path to the single knowledge base file
+file_path = "C:/Users/linzs/Desktop/Agent/knowledge_base/new.txt"
+
+# Read and chunk the file
+with open(file_path, 'r', encoding='utf-8') as f:
+    text = f.read()
+chunks = chunk_text(text)
+
+# Assign consistent metadata for all chunks
+metadata_list = [{"topic": "mut_knowledge_base"}] * len(chunks)
+
+# Upload to Pinecone in batches
+batch_size = 50
+for i in tqdm(range(0, len(chunks), batch_size)):
+    batch_texts = chunks[i:i + batch_size]
+    batch_vectors = model.encode(batch_texts).tolist()
+    ids = [f"id-{i + j}" for j in range(len(batch_texts))]
+    metadata = metadata_list[i:i + batch_size]
+
+    # Pinecone v2 expects a list of tuples: (id, vector, metadata)
+    vectors = [
+        (id_, vec, meta)
+        for id_, vec, meta in zip(ids, batch_vectors, metadata)
+    ]
+
+    index.upsert(vectors=vectors, namespace="__default__")

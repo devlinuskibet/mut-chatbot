@@ -1,4 +1,4 @@
- flask
-sentence-transformers
-pinecone
-requests
+flask==2.3.3
+sentence-transformers==2.2.2
+pinecone==3.0.0
+requests==2.31.0

@@ -1,39 +1,40 @@
 from sentence_transformers import SentenceTransformer
-from pinecone import Pinecone
+import pinecone
 import requests
 
-# Initialize Pinecone
-PINECONE_API_KEY = "Your own api key"
-pc = Pinecone(api_key=PINECONE_API_KEY)
-index = pc.Index("mut-chatbot")
-
-# Embedding model
+# === Embedding Model ===
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
-# LLM settings
-OPENROUTER_API_KEY = "Your own api key"
+# === Pinecone Setup ===
+
+PINECONE_API_KEY = "pcsk_3ryQzC_4oKaRMBdcLr5tFdTXBQi6sGkSvPHSWw57mMtrjYxotz7TAv5w2jruRQw5zaieKo"
+pinecone.init(api_key=PINECONE_API_KEY, environment="us-east-1-aws")
+index = pinecone.Index("mut-chatbot")
+
+# === OpenRouter Settings ===
+OPENROUTER_API_KEY = "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"
 LLM_MODEL = "mistralai/mistral-7b-instruct"
 
-# Embed question
+# === Embedding Function ===
 def embed_query(query):
     return model.encode([query])[0].tolist()
 
-# Search Pinecone
+# === Search in Pinecone Vector DB ===
 def search_index(embedded_query, top_k=3):
     try:
-        response = index.query(vector=embedded_query, top_k=top_k, include_metadata=True, namespace="__default__")
+        response = index.query(vector=embedded_query, top_k=top_k, include_metadata=True)
         results = []
-        for match in response['matches']:
-            meta = match.get('metadata', {})
-            topic = meta.get('topic', 'No Topic')
-            text = meta.get('text', '')
+        for match in getattr(response, 'matches', []):
+            metadata = getattr(match, 'metadata', {}) or {}
+            topic = metadata.get('topic', 'No Topic')
+            text = metadata.get('text', '')
             results.append(f"{topic}: {text}")
         return results
     except Exception as e:
-        print(f"[Pinecone Error] {e}")
+        print(f"[Pinecone error] {e}")
         return []
 
-# Call LLM via OpenRouter
+# === LLM Completion ===
 def call_llm(question, context):
     prompt = f"""You are an assistant for Murang'a University of Technology students.
 Answer the question using the context below.
@@ -56,11 +57,12 @@ Answer:"""
                 "messages": [{"role": "user", "content": prompt}]
             }
         )
+
         if response.ok:
             return response.json()['choices'][0]['message']['content']
         else:
-            print(f"[OpenRouter Error] {response.status_code}: {response.text}")
+            print(f"[OpenRouter error] {response.status_code}: {response.text}")
             return "Sorry, the language model failed to respond."
     except Exception as e:
-        print(f"[OpenRouter Exception] {e}")
+        print(f"[Request exception] {e}")
         return "Sorry, there was an error contacting the AI service."

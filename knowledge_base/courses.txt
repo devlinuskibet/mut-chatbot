@@ -1,7 +1,0 @@
- MUT offers:
-• Undergraduate & postgraduate degrees in Engineering, IT, Business, Agriculture, Hospitality, Education, Pure & Applied Sciences :contentReference[oaicite:12]{index=12}.
-• TVET programmes and ODEL options :contentReference[oaicite:13]{index=13}.
-Key programmes:
-- BSc Computer Science, Mechanical Engineering, Hospitality Management, Food Science, Agriculture, Criminology, Analytical Chemistry :contentReference[oaicite:14]{index=14}.
-- Master’s: MBA, HRM, Public Admin, Applied Ecology, Statistics, Comm & Media :contentReference[oaicite:15]{index=15}.
-- PhD-level in select fields (Business, Computing, Education, etc.) :contentReference[oaicite:16]{index=16}.
