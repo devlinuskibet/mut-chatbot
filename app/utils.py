@@ -1,17 +1,17 @@
+# === Embedding Model ===
 from sentence_transformers import SentenceTransformer
 from pinecone import Pinecone
 import requests
 
-# Initialize Pinecone
-PINECONE_API_KEY = "Your own api key"
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+# === Pinecone Setup ===
+PINECONE_API_KEY = "your api key"
 pc = Pinecone(api_key=PINECONE_API_KEY)
 index = pc.Index("mut-chatbot")
 
-# Embedding model
-model = SentenceTransformer('all-MiniLM-L6-v2')
-
-# LLM settings
-OPENROUTER_API_KEY = "Your own api key"
+# === OpenRouter Settings ===
+OPENROUTER_API_KEY = "your api key"
 LLM_MODEL = "mistralai/mistral-7b-instruct"
 
 # Embed question
